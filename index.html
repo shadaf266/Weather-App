@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weather App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .card {
+            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            border-radius: 20px;
+            width: 350px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 30px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 30px;
+            background: #ffffff;
+            color: #333;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #f1f1f1;
+            transform: scale(1.05);
+        }
+
+        .weather-icon {
+            width: 80px;
+            margin: 15px 0;
+        }
+
+        .temp {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .details {
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        .error {
+            color: #ffdddd;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Weather App</h1>
+
+    <div class="search-box">
+        <input type="text" id="city" placeholder="Enter city name">
+        <button onclick="getWeather()">Search</button>
+    </div>
+
+    <img id="icon" class="weather-icon" src="" alt="">
+
+    <h2 id="cityName"></h2>
+    <div class="temp" id="temperature"></div>
+    <div class="details" id="humidity"></div>
+    <div class="error" id="error"></div>
+</div>
+
+<script>
+async function getWeather() {
+    const city = document.querySelector("#city").value;
+    const errorDiv = document.querySelector("#error");
+    errorDiv.innerText = "";
+   if(city === "") {
+        errorDiv.innerText = "Please enter a city name";
+        return;
+    }
+
+    try {
+        const response = await fetch(
+            `http://api.weatherapi.com/v1/current.json?key=1352499f24d14c26a03100340262102&q=${city}&aqi=no`
+        );
+
+        if(!response.ok){
+            throw new Error("City not found");
+        }
+
+        const data = await response.json();
+
+        document.getElementById("cityName").innerText = data.location.name;
+
+        document.getElementById("temperature").innerText = 
+            "Temperature: " + data.current.temp_c + " °C";
+
+        document.getElementById("humidity").innerText = 
+            "Humidity: " + data.current.humidity + " %";
+
+
+    } catch(error) {
+        alert(error.message);
+    }
+}
+</script>
+
+</body>
+</html>
